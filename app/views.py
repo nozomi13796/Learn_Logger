@@ -20,11 +20,10 @@ def index():
     return render_template('index.html', form=form)
 
 # Show posts route-----
-
 @bp.route('/posts')
 @login_required
 def show_posts():
-    posts = current_app.session.query(Post).all()
+    posts = current_app.session.query(Post).order_by(Post.pid.desc()).all()
     return render_template('posts.html', posts=posts)
 
 # Add route-----

@@ -34,6 +34,7 @@ class Post(Base):
     title = Column(String(100))
     description = Column(String(1000))
     puid = Column(Integer, ForeignKey('users.uid'))
+    created_at = Column(DateTime, default=datetime.datetime.now)
 
     user = relationship("User", back_populates="posts")
 
