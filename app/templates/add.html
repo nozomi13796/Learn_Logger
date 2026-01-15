@@ -1,93 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}My Learning Log - Add Post{% endblock %}
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block content %}
+<div class="container" style="max-width: 600px; margin-top: 30px;">
+  <h2>Add New Post</h2>
 
-  <title>Add Posts</title>
+  <form method="POST">
+    {{ form.hidden_tag() }}
 
-  <link href="/../../static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/../../static/bootstrap/css/bootstrap-theme.min.css">
-  <script src="../../static/bootstrap/js/bootstrap.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <div class="form-group">
+      {{ form.title.label }}
+      {{ form.title(class="form-control", placeholder="Title") }}
+    </div>
 
-  <link rel="stylesheet" type="text/css" href="../static/css/styles.css">
-  <style type="text/css">
-    #us {
-      float: right;
-      margin-right: 20px;
-      margin-top: 10px;
-    }
+    <div class="form-group">
+      {{ form.description.label }}
+      {{ form.description(class="form-control", rows="3", placeholder="Description") }}
+    </div>
 
-    #us h3 {
-      margin: 0 0 0 0;
-    }
-
-    .submitbt {
-      width: 100%;
-      height: 130%;
-      background-color: #337ab7;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-
-    table {
-      width: 30%;
-      height: 60%;
-      margin-top: 30px;
-    }
-
-    table tr td {
-      padding-bottom: 10px;
-    }
-
-    #signout {
-      width: 100px;
-      height: 20px;
-    }
-
-    #signout a {
-      padding: 2px 0px 2px 20px;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="us">
-    <ul class="nav nav-pills">
-      <li>
-        <h3>{{ session['current_user']}} &nbsp</h3>
-      </li>
-      <li role="presentation" class="active" id="signout"><a href="/logout">Sign Out</a></li>
-    </ul>
-  </div>
-  <div>
-    <ul class="nav nav-tabs">
-      <li role="presentation"><a href="/posts">Posts</a></li>
-      <li role="presentation" class="active"><a href="">Add Posts</a></li>
-      <li role="presentation"><a href="/about_user">About</a></li>
-    </ul>
-  </div>
-  <div>
-    <form action="" method="POST">
-      {{ form.hidden_tag() }}
-      <table align="center">
-        <tr>
-          <td>{{ form.title(class="form-control",placeholder="Title") }}</td>
-        </tr>
-        <tr>
-          <td>{{ form.description(class="form-control",rows="3",placeholder="Description") }}</td>
-        </tr>
-        <tr>
-          <td align="center"><input class="submitbt" type="submit" value="Post" /></td>
-        </tr>
-      </table>
-    </form>
-  </div>
-
-</body>
-
-</html>
+    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 20px;">
+      Post
+    </button>
+  </form>
+</div>
+{% endblock %}
