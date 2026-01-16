@@ -1,11 +1,13 @@
 # app/forms.py
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField , SubmitField
-from wtforms.validators import DataRequired, Email, Length
+from wtforms import StringField, PasswordField, TextAreaField , SubmitField, IntegerField
+from wtforms.validators import DataRequired, Email, Length, NumberRange
 
 class AddPostForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired(), Length(max=100)])
     description = TextAreaField("Description", validators=[DataRequired(), Length(max=1000)])
+    study_minutes = IntegerField("Study Minutes", validators=[NumberRange(min=0)])
+    tags = StringField("Tags")
     submit = SubmitField("Add Post")
 
 

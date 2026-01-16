@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}My Learning Log - Posts{% endblock %}
+{% block title %}My Learning Log - #{{ tag.name }}{% endblock %}
 
 {% block content %}
 <div style="max-width: 800px; margin: 0 auto; margin-top: 30px;">
 
-  <h2>Your Posts</h2>
+  <h2>tag: {{ tag.name }} total: {{ total_minutes }} minutes</h2>
 
   {% for i in posts %}
   <div style="border: 1px solid #ddd; border-radius: 6px; padding: 20px; margin-bottom: 20px;">

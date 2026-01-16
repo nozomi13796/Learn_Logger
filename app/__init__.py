@@ -1,15 +1,23 @@
 from flask import Flask
-from .database import init_db
+from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from .models import User
 from markdown_it import MarkdownIt
 import bleach
+
+db = SQLAlchemy()
 
 def create_app():
     #Flask_app_config-----
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'your_secret_key'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    #Database_setup-----
+    db.init_app(app)
+    from .models import User
+    with app.app_context():
+        db.create_all()
 
     #LoginManager_config-----
     login_manager = LoginManager()
@@ -18,11 +26,7 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        session_db = app.session
-        return session_db.query(User).get(int(user_id))
-
-    #Database_initialization-----
-    init_db(app)
+        return db.session.query(User).get(int(user_id))
 
     #Blueprint_registration-----
     from .views import bp

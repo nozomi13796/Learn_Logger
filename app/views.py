@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request,\
 redirect, url_for, current_app
-from .models import Post, User
+from .models import Post, User, Tag, PostTags
 from .forms import AddPostForm, SignUpForm, SignInForm, AboutUserForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
+from app import db
 
 bp = Blueprint('blog', __name__)
 
@@ -12,8 +13,7 @@ bp = Blueprint('blog', __name__)
 def index():
     form = SignInForm()
     if form.validate_on_submit():
-        session_db = current_app.session
-        user = session_db.query(User).filter_by(username=form.username.data).first()
+        user = db.session.query(User).filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password, form.password.data):
             login_user(user)
             return redirect(url_for('blog.show_posts'))
@@ -23,41 +23,85 @@ def index():
 @bp.route('/posts')
 @login_required
 def show_posts():
-    posts = current_app.session.query(Post).order_by(Post.pid.desc()).all()
+    posts = db.session.query(Post).order_by(Post.pid.desc()).all()
     return render_template('posts.html', posts=posts)
+
+# Show tag route-----
+@bp.route('/tag/<string:name>')
+@login_required
+def show_tag(name):
+    tag = db.session.query(Tag).filter_by(name=name).first()
+    if not tag:
+        return redirect(url_for('blog.show_posts'))
+    posts = tag.posts
+    total_minutes = sum(post.study_minutes for post in posts)
+    return render_template('tag.html', posts=posts, tag=tag, total_minutes=total_minutes)
 
 # Add route-----
 @bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_post():
     form = AddPostForm()
-    session_db = current_app.session
-    us = current_user
+    # add new post
     if form.validate_on_submit():
         post = Post(title=form.title.data,
                     description=form.description.data,
-                    puid=us.uid)
-        session_db.add(post)
-        session_db.commit()
+                    puid=current_user.uid,
+                    study_minutes=form.study_minutes.data
+        )
+
+        # add tags
+        raw_tags = form.tags.data or ""
+        tag_names = [t.strip() for t in raw_tags.split(",") if t.strip()]
+
+        for name in tag_names:
+
+            tag =db.session.query(Tag).filter_by(name=name).first()
+            if not tag:
+                tag = Tag(name=name)
+                db.session.add(tag)
+
+            post.tags.append(tag)
+
+        db.session.add(post)
+        db.session.commit()
         return redirect(url_for('blog.show_posts'))
+
     return render_template('add.html', form=form)
 
 # Update route-----
 @bp.route('/update/<int:pid>', methods=['GET', 'POST'])
 @login_required
 def update_post(pid):
-    session_db = current_app.session
-    post = session_db.query(Post).get(pid)
+    post = db.session.get(Post, pid)
 
     if current_user.uid != post.puid:
         return redirect(url_for('blog.show_posts'))
 
     form = AddPostForm(obj=post)
+    # 既存のタグをフォームにセット
+    if request.method == 'GET':
+        tag_names = [tag.name for tag in post.tags]
+        form.tags.data = ", ".join(tag_names)
 
     if form.validate_on_submit():
         post.title = form.title.data
         post.description = form.description.data
-        session_db.commit()
+        post.study_minutes = form.study_minutes.data
+        # update tags
+        raw_tags = form.tags.data or ""
+        tag_names = [t.strip() for t in raw_tags.split(",") if t.strip()]
+
+        post.tags.clear()
+
+        for name in tag_names:
+            tag = db.session.query(Tag).filter_by(name=name).first()
+            if not tag:
+                tag = Tag(name=name)
+                db.session.add(tag)
+            post.tags.append(tag)
+
+        db.session.commit()
         return redirect(url_for('blog.show_posts'))
     return render_template('update.html', form=form)
 
@@ -65,11 +109,10 @@ def update_post(pid):
 @bp.route('/delete/<int:pid>', methods=['GET', 'POST'])
 @login_required
 def delete_post(pid):
-    session_db = current_app.session
-    post = session_db.query(Post).get(pid)
+    post = db.session.query(Post).get(pid)
     if current_user.uid == post.puid:
-        session_db.delete(post)
-        session_db.commit()
+        db.session.delete(post)
+        db.session.commit()
         return redirect(url_for('blog.show_posts'))
     return redirect(url_for('blog.show_posts'))
 
@@ -79,14 +122,13 @@ def signup():
     form = SignUpForm()
     if form.validate_on_submit():
         hashed_pw = generate_password_hash(form.password.data)
-        session_db = current_app.session
         user = User(username=form.username.data,
                     firstname=form.firstname.data,
                     lastname=form.lastname.data,
                     email=form.email.data,
                     password=hashed_pw)
-        session_db.add(user)
-        session_db.commit()
+        db.session.add(user)
+        db.session.commit()
         return redirect(url_for('blog.index'))
     return render_template('signup.html', form=form)
 
