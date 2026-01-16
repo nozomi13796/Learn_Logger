@@ -1,0 +1,6 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+markdown-it-py
+bleach
+gunicorn
