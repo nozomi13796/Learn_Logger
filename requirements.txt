@@ -2,6 +2,7 @@ Flask
 Flask-SQLAlchemy
 Flask-WTF
 Flask-Login
+email-validator
 markdown-it-py
 bleach
 gunicorn
