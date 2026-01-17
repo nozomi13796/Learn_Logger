@@ -31,7 +31,7 @@ def signin():
 def show_tag(name):
     tag = db.session.query(Tag).filter_by(name=name).first()
     if not tag:
-        return redirect(url_for('blog.show_posts'))
+        return redirect(url_for('blog.index'))
     posts = tag.posts
     total_minutes = sum(post.study_minutes for post in posts)
     return render_template('tag.html', posts=posts, tag=tag, total_minutes=total_minutes)
@@ -112,8 +112,8 @@ def delete_post(pid):
     if current_user.uid == post.puid:
         db.session.delete(post)
         db.session.commit()
-        return redirect(url_for('blog.show_posts'))
-    return redirect(url_for('blog.show_posts'))
+        return redirect(url_for('blog.index'))
+    return redirect(url_for('blog.index'))
 
 # Signup route-----
 @bp.route('/signup', methods=['GET', 'POST'])
