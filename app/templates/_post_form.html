@@ -1,0 +1,40 @@
+<form method="POST">
+  {{ form.hidden_tag() }}
+
+  <!-- Title -->
+  <div class="form-control mb-4">
+    <label class="label">
+      <span class="label-text">{{ form.title.label.text }}</span>
+    </label>
+    {{ form.title(class="input input-bordered w-full", placeholder=title_placeholder) }}
+  </div>
+
+  <!-- Description -->
+  <div class="form-control mb-4">
+    <label class="label">
+      <span class="label-text">{{ form.description.label.text }}</span>
+    </label>
+    {{ form.description(class="textarea textarea-bordered w-full", rows="5", placeholder=description_placeholder) }}
+  </div>
+
+  <!-- Study Minutes -->
+  <div class="form-control mb-4">
+    <label class="label">
+      <span class="label-text">{{ form.study_minutes.label.text }}</span>
+    </label>
+    {{ form.study_minutes(class="input input-bordered w-full", placeholder="Minutes") }}
+  </div>
+
+  <!-- Tags -->
+  <div class="form-control mb-6">
+    <label class="label">
+      <span class="label-text">{{ form.tags.label.text }}</span>
+    </label>
+    {{ form.tags(class="input input-bordered w-full", placeholder="Tags (comma separated)") }}
+  </div>
+
+  <!-- Submit -->
+  <button type="submit" class="btn btn-primary w-full">
+    {{ submit_label }}
+  </button>
+</form>

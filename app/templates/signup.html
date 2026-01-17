@@ -2,41 +2,41 @@
 {% block title %}My Learning Log - Sign Up{% endblock %}
 
 {% block content %}
-<div style="max-width: 500px; margin: 0 auto; margin-top: 30px;">
+<div class="max-w-xl mx-auto mt-10 p-6 bg-base-100 rounded-lg shadow">
     <form method="POST">
-        <h2>Please Sign Up</h2>
+        <h2 class="text-2xl font-bold mb-6">Please Sign Up</h2>
         {{ form.hidden_tag() }}
 
         <div class="form-group">
             {{ form.firstname.label }}
-            {{ form.firstname(class="form-control", placeholder="First Name") }}
+            {{ form.firstname(class="input input-bordered w-full", placeholder="First Name") }}
         </div>
 
         <div class="form-group">
             {{ form.lastname.label }}
-            {{ form.lastname(class="form-control", placeholder="Last Name") }}
+            {{ form.lastname(class="input input-bordered w-full", placeholder="Last Name") }}
         </div>
 
         <div class="form-group">
             {{ form.username.label }}
-            {{ form.username(class="form-control", placeholder="User Name") }}
+            {{ form.username(class="input input-bordered w-full", placeholder="User Name") }}
         </div>
 
         <div class="form-group">
             {{ form.email.label }}
-            {{ form.email(class="form-control", placeholder="Email") }}
+            {{ form.email(class="input input-bordered w-full", placeholder="Email") }}
         </div>
 
         <div class="form-group">
             {{ form.password.label }}
-            {{ form.password(class="form-control", placeholder="Password") }}
+            {{ form.password(class="input input-bordered w-full", placeholder="Password") }}
         </div>
 
         <div class="form-group">
-            {{ form.submit(class="btn btn-lg btn-primary btn-block") }}
+            {{ form.submit(class="btn btn-primary w-full mt-4") }}
         </div>
 
-        <div class="noacc">Already have an account! <a class="signup" href="{{ url_for('blog.index') }}">Sign In
+        <div class="mt-4 text-center">Already have an account! <a class="signup" href="{{ url_for('blog.index') }}">Sign In
                 Here</a></div>
     </form>
 </div>

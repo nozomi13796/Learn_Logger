@@ -75,7 +75,7 @@ def update_post(pid):
     post = db.session.get(Post, pid)
 
     if current_user.uid != post.puid:
-        return redirect(url_for('blog.show_posts'))
+        return redirect(url_for('blog.index'))
 
     form = AddPostForm(obj=post)
     # 既存のタグをフォームにセット
@@ -101,7 +101,7 @@ def update_post(pid):
             post.tags.append(tag)
 
         db.session.commit()
-        return redirect(url_for('blog.show_posts'))
+        return redirect(url_for('blog.index'))
     return render_template('update.html', form=form)
 
 # Delete route-----
