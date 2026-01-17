@@ -26,9 +26,9 @@ def create_app():
 
     db.init_app(app)
 
-    #from .models import User
-    #with app.app_context():
-    #    db.create_all()
+    from .models import User
+    with app.app_context():
+        db.create_all()
 
     #LoginManager_config-----
     login_manager = LoginManager()
