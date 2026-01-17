@@ -1,0 +1,16 @@
+<nav class="navbar bg-base-100 shadow">
+    <div class="flex-1">
+        <a href="/" class="btn btn-ghost text-xl">Learn Logger</a>
+    </div>
+
+    <div class="flex-none">
+        <ul class="menu menu-horizontal px-1">
+            {% if current_user.is_authenticated %}
+            <li><a href="/add">New Post</a></li>
+            <li><a href="/logout">Logout</a></li>
+            {% else %}
+            <li><a href="/signin">Login</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

@@ -8,23 +8,22 @@ from app import db
 
 bp = Blueprint('blog', __name__)
 
-# Index route-----
-@bp.route('/', methods=['GET', 'POST'])
+# Index - posts route-----
+@bp.route('/')
 def index():
+    posts = db.session.query(Post).order_by(Post.pid.desc()).all()
+    return render_template('index.html', posts=posts)
+
+# Signin route-----
+@bp.route('/signin', methods=['GET', 'POST'])
+def signin():
     form = SignInForm()
     if form.validate_on_submit():
         user = db.session.query(User).filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password, form.password.data):
             login_user(user)
-            return redirect(url_for('blog.show_posts'))
-    return render_template('index.html', form=form)
-
-# Show posts route-----
-@bp.route('/posts')
-@login_required
-def show_posts():
-    posts = db.session.query(Post).order_by(Post.pid.desc()).all()
-    return render_template('posts.html', posts=posts)
+            return redirect(url_for('blog.index'))
+    return render_template('signin.html', form=form)
 
 # Show tag route-----
 @bp.route('/tag/<string:name>')
@@ -65,7 +64,7 @@ def add_post():
 
         db.session.add(post)
         db.session.commit()
-        return redirect(url_for('blog.show_posts'))
+        return redirect(url_for('blog.index'))
 
     return render_template('add.html', form=form)
 

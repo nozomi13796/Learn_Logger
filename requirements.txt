@@ -6,3 +6,4 @@ email-validator
 markdown-it-py
 bleach
 gunicorn
+psycopg2-binary

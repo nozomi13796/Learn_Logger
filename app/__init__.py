@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from markdown_it import MarkdownIt
+import os
 import bleach
 
 db = SQLAlchemy()
@@ -10,14 +11,24 @@ def create_app():
     #Flask_app_config-----
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'your_secret_key'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/blog.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     #Database_setup-----
+    database_url = os.environ.get("DATABASE_URL")
+
+    if database_url:
+        database_url = database_url.replace("postgres://", "postgresql://")
+        app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+    else:
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///blog.db"
+
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
     db.init_app(app)
-    from .models import User
-    with app.app_context():
-        db.create_all()
+
+    #from .models import User
+    #with app.app_context():
+    #    db.create_all()
 
     #LoginManager_config-----
     login_manager = LoginManager()

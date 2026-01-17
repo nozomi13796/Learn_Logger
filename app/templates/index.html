@@ -1,18 +1,51 @@
 {% extends "base.html" %}
-
-{% block title %}My Learning Log - Sign In{% endblock %}
+{% block title %}Posts - Learn Logger{% endblock %}
 
 {% block content %}
-<div class="container">
-    <form class="form-signin" action="" method="POST">
-      <h2 class="form-signin-heading">Please Sign In</h2>
-      {{ form.hidden_tag() }}
-      {{ form.username(placeholder="User Name", class="form-control") }}
-      {{ form.password(placeholder="Password", class="form-control") }}
-      {{ form.submit(class="btn btn-lg btn-primary btn-block")}}
-      <div class="noacc">
-        Don't have an account? <a href="{{ url_for('blog.signup') }}">Sign Up Here</a>
+<h2 class="text-3xl font-bold mb-6 text-center">Posts:</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {% for i in posts %}
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+
+      <!-- タイトル + 編集ボタン -->
+      <div class="flex justify-between items-start">
+        <h3 class="card-title">{{ i.title }}</h3>
+
+        {% if current_user.is_authenticated %}
+        <div class="flex gap-2">
+          <a href="{{ url_for('blog.update_post', pid=i.pid) }}" class="btn btn-sm btn-outline">Edit</a>
+          <a href="{{ url_for('blog.delete_post', pid=i.pid) }}" class="btn btn-sm btn-error">Delete</a>
+        </div>
+        {% endif %}
       </div>
-    </form>
+
+      <!-- 投稿者 -->
+      <p class="text-sm opacity-70">BY: {{ i.user.username }}</p>
+
+      <!-- 本文（3行で省略） -->
+      <div class="mt-2 line-clamp-3">
+        {{ i.description | markdown | safe }}
+      </div>
+
+      <!-- 日付・学習時間 -->
+      <div class="text-right text-xs opacity-70 mt-4">
+        {{ i.created_at }} / {{ i.study_minutes }} 分
+      </div>
+
+      <!-- タグ -->
+      <div class="mt-3 flex flex-wrap gap-2">
+        {% for tag in i.tags %}
+        <a href="{{ url_for('blog.show_tag', name=tag.name) }}" class="badge badge-primary">
+          #{{ tag.name }}
+        </a>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+  {% endfor %}
 </div>
 {% endblock %}
+
